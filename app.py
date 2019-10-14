@@ -21,6 +21,7 @@ app = Flask(__name__)
 app.config['UPLOADED_PHOTOS_DEST'] = os.getcwd()  # 文件储存地址
 
 photos = UploadSet('photos', IMAGES)
+files = UploadSet('files')
 configure_uploads(app, photos)
 patch_request_class(app)  # 文件大小限制，默认为16MB
 
@@ -47,9 +48,8 @@ html = '''
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        print(request.files)
         ir = photos.save(request.files['ir'])
-        raw = photos.save(request.files['raw'])
+        raw = files.save(request.files['raw'])
         # depth = photos.save(request.files['depth'])
         file_url = photos.url(ir)
 
