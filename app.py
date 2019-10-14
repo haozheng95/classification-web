@@ -22,7 +22,7 @@ app.config['UPLOADED_PHOTOS_DEST'] = os.getcwd()  # 文件储存地址
 
 photos = UploadSet('photos', IMAGES)
 files = UploadSet('files')
-configure_uploads(app, photos)
+configure_uploads(app, files)
 patch_request_class(app)  # 文件大小限制，默认为16MB
 
 cwd = "/home/bayesai/yinhaozheng/Face-Liveness_detection/"
@@ -48,12 +48,12 @@ html = '''
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        ir = photos.save(request.files['ir'])
+        ir = files.save(request.files['ir'])
         raw = files.save(request.files['raw'])
         # depth = photos.save(request.files['depth'])
-        file_url = photos.url(ir)
+        file_url = files.url(ir)
 
-        ir_source, raw_source = photos.path(ir), photos.path(raw)
+        ir_source, raw_source = files.path(ir), files.path(raw)
         clean()
         copyfile(ir_source, ir_target)
         copyfile(raw_source, raw_target)
