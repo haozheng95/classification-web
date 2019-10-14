@@ -11,18 +11,17 @@ __mtime__ = '2019-10-14'
 
 import os
 from flask import Flask, request
-from flask_uploads import UploadSet, configure_uploads, IMAGES, \
+from flask_uploads import UploadSet, configure_uploads, \
     patch_request_class
 
 import subprocess
 from shutil import copyfile
-
+IMAGES = tuple('jpg jpe jpeg png gif svg bmp raw'.split())
 app = Flask(__name__)
 app.config['UPLOADED_PHOTOS_DEST'] = os.getcwd()  # 文件储存地址
 
 photos = UploadSet('photos', IMAGES)
-files = UploadSet('files')
-configure_uploads(app, files)
+configure_uploads(app, photos)
 patch_request_class(app)  # 文件大小限制，默认为16MB
 
 cwd = "/home/bayesai/yinhaozheng/Face-Liveness_detection/"
@@ -48,12 +47,13 @@ html = '''
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        ir = files.save(request.files['ir'])
-        raw = files.save(request.files['raw'])
+        print(request.files)
+        ir = photos.save(request.files['ir'])
+        raw = photos.save(request.files['raw'])
         # depth = photos.save(request.files['depth'])
-        file_url = files.url(ir)
+        file_url = photos.url(ir)
 
-        ir_source, raw_source = files.path(ir), files.path(raw)
+        ir_source, raw_source = photos.path(ir), photos.path(raw)
         clean()
         copyfile(ir_source, ir_target)
         copyfile(raw_source, raw_target)
