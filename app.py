@@ -34,7 +34,7 @@ ir_target = os.path.join(face_path, "0000_IR_frontface.jpg")
 raw_target = os.path.join(face_path, "raw_0000_frontface.raw")
 
 cwd_2 = "/home/bayesai/yinhaozheng/svm_classification"
-shell_2 = "python demo.py"
+shell_2 = "python demo.py  "
 
 html = '''
     <!DOCTYPE html>
@@ -56,7 +56,9 @@ def upload_file():
         rgb = photos.save(request.files['rgb'])
         ir = photos.save(request.files['ir'])
         raw = photos.save(request.files['raw'])
-        # depth = photos.save(request.files['depth'])
+        depth = photos.save(request.files['depth'])
+
+
         file_url = photos.url(rgb)
 
         ir_source, raw_source = photos.path(ir), photos.path(raw)
@@ -70,14 +72,19 @@ def upload_file():
         text = str(b, encoding="utf-8")
         result = text.split("\n")
 
-        sub = subprocess.Popen(shell_2, shell=True, cwd=cwd_2, stdout=subprocess.PIPE)
+        sub = subprocess.Popen(shell_2 + photos.path(depth), shell=True, cwd=cwd_2, stdout=subprocess.PIPE)
         sub.wait()
         b = sub.stdout.read()
         text = str(b, encoding="utf-8")
         result_2 = text.split("\n")
-        print(result_2)
+        sculpture = ""
+        if '[1]' == result_2[6]:
+            sculpture = "是雕塑"
+            result[14] = "不是人脸"
+        else:
+            sculpture = "不是雕塑"
 
-        return html + '<h1>' + result[14] + '</h1>' + '<br><img src=' + file_url + '>'
+        return html + '<h1>' + result[14] + '</h1>' + '<br><img src=' + file_url + '>' + '<h1>' + sculpture + '</h1>'
     return html
 
 
