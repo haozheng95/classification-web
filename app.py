@@ -72,12 +72,19 @@ def upload_file():
         text = str(b, encoding="utf-8")
         print(text)
         result = text.split("\n")
+
+        if "是人脸" == result[14]:
+            result[14] = "是人脸"
+        else:
+            result[14] = "不是人脸"
         print("-------------------")
         sub = subprocess.Popen(shell_2 + photos.path(depth), shell=True, cwd=cwd_2, stdout=subprocess.PIPE)
         sub.wait()
         b = sub.stdout.read()
         text = str(b, encoding="utf-8")
         result_2 = text.split("\n")
+
+
         print(text)
         sculpture = ""
         if '[1]' == result_2[6]:
