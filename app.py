@@ -70,13 +70,15 @@ def upload_file():
         sub.wait()
         b = sub.stdout.read()
         text = str(b, encoding="utf-8")
+        print(text)
         result = text.split("\n")
-
+        print("-------------------")
         sub = subprocess.Popen(shell_2 + photos.path(depth), shell=True, cwd=cwd_2, stdout=subprocess.PIPE)
         sub.wait()
         b = sub.stdout.read()
         text = str(b, encoding="utf-8")
         result_2 = text.split("\n")
+        print(text)
         sculpture = ""
         if '[1]' == result_2[6]:
             sculpture = "是雕塑"
