@@ -51,7 +51,8 @@ def upload_file():
         sub.wait()
         b = sub.stdout.read()
         text = str(b, encoding="utf-8")
-        print(text)
+        result = text.split("\n")
+        print(result)
         return html + '<br><img src=' + file_url + '>'
     return html
 
