@@ -15,6 +15,7 @@ from flask_uploads import UploadSet, configure_uploads, IMAGES, \
     patch_request_class
 
 import subprocess
+from shutil import copyfile
 
 app = Flask(__name__)
 app.config['UPLOADED_PHOTOS_DEST'] = os.getcwd()  # 文件储存地址
@@ -25,6 +26,10 @@ patch_request_class(app)  # 文件大小限制，默认为16MB
 
 cwd = "/home/bayesai/yinhaozheng/Face-Liveness_detection/"
 shell = "./dlib_test_process"
+face_path = os.path.join(cwd, "face")
+
+ir_target = os.path.join(face_path, "0000_IR_frontface.jpg")
+raw_target = os.path.join(face_path, "raw_0000_frontface.raw")
 
 html = '''
     <!DOCTYPE html>
@@ -43,9 +48,14 @@ html = '''
 def upload_file():
     if request.method == 'POST':
         ir = photos.save(request.files['ir'])
-        # raw = photos.save(request.files['raw'])
+        raw = photos.save(request.files['raw'])
         # depth = photos.save(request.files['depth'])
         file_url = photos.url(ir)
+
+        ir_source, raw_source = photos.path(ir), photos.path(raw)
+        clean()
+        copyfile(ir_source, ir_target)
+        copyfile(raw_source, raw_target)
 
         sub = subprocess.Popen(shell, shell=True, cwd=cwd, stdout=subprocess.PIPE)
         sub.wait()
@@ -54,6 +64,13 @@ def upload_file():
         result = text.split("\n")
         return html + '<h1>' + result[14] + '</h1>' + '<br><img src=' + file_url + '>'
     return html
+
+
+def clean():
+    if os.path.exists(ir_target):
+        os.remove(ir_target)
+    if os.path.exists(raw_target):
+        os.remove(raw_target)
 
 
 if __name__ == '__main__':
