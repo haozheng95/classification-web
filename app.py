@@ -87,7 +87,7 @@ def upload_file():
 
         print(text)
         sculpture = ""
-        if '[1]' == result_2[6]:
+        if '[2]' == result_2[6]:
             sculpture = "是雕塑"
             result[14] = "不是人脸"
         else:
