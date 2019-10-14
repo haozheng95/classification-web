@@ -58,7 +58,6 @@ def upload_file():
         raw = photos.save(request.files['raw'])
         depth = photos.save(request.files['depth'])
 
-
         file_url = photos.url(rgb)
 
         ir_source, raw_source = photos.path(ir), photos.path(raw)
@@ -87,7 +86,7 @@ def upload_file():
         print(result_2[5])
         print(text)
         sculpture = ""
-        if '[2]' == result_2[5]:
+        if '[2]' == result_2[5] and "是人脸" == result[14]:
             sculpture = "是雕塑"
             result[14] = "不是人脸"
         else:
