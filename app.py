@@ -49,8 +49,9 @@ def upload_file():
 
         sub = subprocess.Popen(shell, shell=True, cwd=cwd, stdout=subprocess.PIPE)
         sub.wait()
-        result = sub.stdout.read()
-        print(result)
+        b = sub.stdout.read()
+        text = str(b, encoding="utf-8")
+        print(text)
         return html + '<br><img src=' + file_url + '>'
     return html
 
