@@ -47,6 +47,7 @@ html = '''
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
+        print(request.files)
         ir = photos.save(request.files['ir'])
         raw = photos.save(request.files['raw'])
         # depth = photos.save(request.files['depth'])
