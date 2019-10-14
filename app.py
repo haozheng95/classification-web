@@ -83,8 +83,8 @@ def upload_file():
         b = sub.stdout.read()
         text = str(b, encoding="utf-8")
         result_2 = text.split("\n")
-
-
+        print("-------------------")
+        print(result_2[6])
         print(text)
         sculpture = ""
         if '[2]' == result_2[6]:
