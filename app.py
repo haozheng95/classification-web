@@ -52,8 +52,7 @@ def upload_file():
         b = sub.stdout.read()
         text = str(b, encoding="utf-8")
         result = text.split("\n")
-        print(result[14])
-        return html + '<br><img src=' + file_url + '>'
+        return html + '<h1>' + result[14] + '</h1>' + '<br><img src=' + file_url + '>'
     return html
 
 
