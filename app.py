@@ -16,6 +16,7 @@ from flask_uploads import UploadSet, configure_uploads, \
 
 import subprocess
 from shutil import copyfile
+
 IMAGES = tuple('jpg jpe jpeg png gif svg bmp raw'.split())
 app = Flask(__name__)
 app.config['UPLOADED_PHOTOS_DEST'] = os.getcwd()  # 文件储存地址
@@ -26,16 +27,21 @@ patch_request_class(app)  # 文件大小限制，默认为16MB
 
 cwd = "/home/bayesai/yinhaozheng/Face-Liveness_detection/"
 shell = "./dlib_test_process"
+
 face_path = os.path.join(cwd, "face")
 
 ir_target = os.path.join(face_path, "0000_IR_frontface.jpg")
 raw_target = os.path.join(face_path, "raw_0000_frontface.raw")
+
+cwd_2 = "/home/bayesai/yinhaozheng/svm_classification"
+shell_2 = "python demo.py"
 
 html = '''
     <!DOCTYPE html>
     <title>Upload File</title>
     <h1>图片上传</h1>
     <form method=post enctype=multipart/form-data>
+         <input  type=file name=rgb>   <p>rgb</p>
          <input  type=file name=ir>    <p>ir</p>
          <input  type=file name=raw>   <p>raw</p>
          <input  type=file name=depth> <p>depth</p>
@@ -47,11 +53,11 @@ html = '''
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        print(request.files)
+        rgb = photos.save(request.files['rgb'])
         ir = photos.save(request.files['ir'])
         raw = photos.save(request.files['raw'])
         # depth = photos.save(request.files['depth'])
-        file_url = photos.url(ir)
+        file_url = photos.url(rgb)
 
         ir_source, raw_source = photos.path(ir), photos.path(raw)
         clean()
@@ -63,6 +69,14 @@ def upload_file():
         b = sub.stdout.read()
         text = str(b, encoding="utf-8")
         result = text.split("\n")
+
+        sub = subprocess.Popen(shell_2, shell=True, cwd=cwd_2, stdout=subprocess.PIPE)
+        sub.wait()
+        b = sub.stdout.read()
+        text = str(b, encoding="utf-8")
+        result_2 = text.split("\n")
+        print(result_2)
+
         return html + '<h1>' + result[14] + '</h1>' + '<br><img src=' + file_url + '>'
     return html
 
