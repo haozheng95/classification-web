@@ -16,6 +16,7 @@ from flask_uploads import UploadSet, configure_uploads, \
 
 import subprocess
 from shutil import copyfile
+from PIL import Image
 
 IMAGES = tuple('jpg jpe jpeg png gif svg bmp raw'.split())
 app = Flask(__name__)
@@ -77,12 +78,18 @@ def upload_file():
         else:
             result[14] = "不是人脸"
         print("-------------------")
-        sub = subprocess.Popen(shell_2 + photos.path(depth), shell=True, cwd=cwd_2, stdout=subprocess.PIPE)
+        depth_path = photos.path(depth)
+        if depth[-3:] == "png":
+            temp_path = depth_path[:-3] + "jpg"
+            png2jpg(depth_path, temp_path)
+            depth_path = temp_path
+        print(depth_path)
+        sub = subprocess.Popen(shell_2 + depth_path, shell=True, cwd=cwd_2, stdout=subprocess.PIPE)
         sub.wait()
         b = sub.stdout.read()
         text = str(b, encoding="utf-8")
         result_2 = text.split("\n")
-        print("-------------------")
+        os.remove(depth_path)
         print(result_2[5])
         print(text)
         sculpture = ""
@@ -101,6 +108,11 @@ def clean():
         os.remove(ir_target)
     if os.path.exists(raw_target):
         os.remove(raw_target)
+
+
+def png2jpg(source_path, target_path):
+    im = Image.open(source_path)
+    im.save(target_path)
 
 
 if __name__ == '__main__':
